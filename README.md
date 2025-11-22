@@ -1,65 +1,68 @@
-# E-commerce Sales Forecasting Pipeline
+# Pipeline de Predicción de Ventas E-commerce
 
-## Overview
-This project implements an end-to-end data pipeline for e-commerce sales forecasting. It generates synthetic transactional data, processes it into a time-series format, trains a Machine Learning model (Random Forest), and visualizes the results in an interactive dashboard.
+> [!NOTE]
+> 🇺🇸 **[Read in English](README_en.md)**
 
-The goal is to demonstrate a modern, lightweight data engineering and data science workflow using Python.
+## Descripción General
+Este proyecto implementa un pipeline de datos "end-to-end" para la predicción de ventas en comercio electrónico. Genera datos transaccionales sintéticos, los procesa en formato de series temporales, entrena un modelo de Machine Learning (Random Forest) y visualiza los resultados en un dashboard interactivo.
 
-## Architecture
-The pipeline consists of four main stages:
+El objetivo es demostrar un flujo de trabajo moderno y ligero de ingeniería de datos y ciencia de datos utilizando Python.
 
-1.  **Data Generation**: Creates realistic synthetic data for products, customers, and sales transactions using `Faker`.
-2.  **Ingestion**: Loads raw CSV data into a **DuckDB** analytical database.
-3.  **Processing**: Aggregates transactional data into daily sales figures and performs feature engineering (lags, rolling means).
-4.  **Modeling**: Trains a **RandomForestRegressor** (Scikit-learn) to predict future sales and generates a 30-day forecast.
-5.  **Visualization**: Presents historical data and forecasts via a **Streamlit** dashboard.
+## Arquitectura
+El pipeline consta de cuatro etapas principales:
 
-## Tech Stack
--   **Language**: Python 3.10+
--   **Database**: DuckDB (In-process SQL OLAP database)
--   **Data Processing**: Pandas, NumPy
+1.  **Generación de Datos**: Crea datos sintéticos realistas para productos, clientes y transacciones de ventas utilizando `Faker`.
+2.  **Ingesta**: Carga datos CSV crudos en una base de datos analítica **DuckDB**.
+3.  **Procesamiento**: Agrega datos transaccionales en cifras de ventas diarias y realiza ingeniería de características (lags, medias móviles).
+4.  **Modelado**: Entrena un **RandomForestRegressor** (Scikit-learn) para predecir ventas futuras y genera un pronóstico de 30 días.
+5.  **Visualización**: Presenta datos históricos y pronósticos a través de un dashboard de **Streamlit**.
+
+## Stack Tecnológico
+-   **Lenguaje**: Python 3.10+
+-   **Base de Datos**: DuckDB (Base de datos SQL OLAP en proceso)
+-   **Procesamiento de Datos**: Pandas, NumPy
 -   **Machine Learning**: Scikit-learn
 -   **Dashboard**: Streamlit
--   **Visualization**: Matplotlib
+-   **Visualización**: Matplotlib
 
-## Project Structure
+## Estructura del Proyecto
 ```
-├── data/               # Data storage (raw CSVs and DuckDB database)
+├── data/               # Almacenamiento de datos (CSVs crudos y base de datos DuckDB)
 ├── src/
-│   ├── generator.py    # Synthetic data generator
-│   ├── ingestion.py    # Data loading and schema creation
-│   ├── processing.py   # Feature engineering and aggregation
-│   ├── model.py        # ML model training and inference
-│   └── dashboard.py    # Streamlit application
-├── main.py             # Pipeline orchestrator
-├── requirements.txt    # Project dependencies
-└── README.md           # Project documentation
+│   ├── generator.py    # Generador de datos sintéticos
+│   ├── ingestion.py    # Carga de datos y creación de esquema
+│   ├── processing.py   # Ingeniería de características y agregación
+│   ├── model.py        # Entrenamiento e inferencia del modelo ML
+│   └── dashboard.py    # Aplicación Streamlit
+├── main.py             # Orquestador del pipeline
+├── requirements.txt    # Dependencias del proyecto
+└── README.md           # Documentación del proyecto
 ```
 
-## Setup and Usage
+## Configuración y Uso
 
-### 1. Installation
-Clone the repository and install the required dependencies:
+### 1. Instalación
+Clona el repositorio e instala las dependencias requeridas:
 
 ```bash
-git clone <repository-url>
+git clone <url-del-repositorio>
 cd data_pipeline_project
 pip install -r requirements.txt
 ```
 
-### 2. Run the Pipeline
-Execute the full data pipeline (generation -> ingestion -> processing -> modeling):
+### 2. Ejecutar el Pipeline
+Ejecuta el pipeline de datos completo (generación -> ingesta -> procesamiento -> modelado):
 
 ```bash
 python3 main.py
 ```
 
-### 3. Launch Dashboard
-Start the interactive dashboard to view the results:
+### 3. Lanzar el Dashboard
+Inicia el dashboard interactivo para ver los resultados:
 
 ```bash
 streamlit run src/dashboard.py
 ```
 
-## Credits
-Developed by **Jose Colomina Alvarez**.
+## Créditos
+Desarrollado por **Jose Colomina Alvarez**.
