@@ -4,29 +4,55 @@ from faker import Faker
 import random
 from datetime import datetime, timedelta
 import os
+import logging
 
-# Configuración
-fake = Faker('es_ES')
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
+# Configuration
+LOCALE = 'es_ES'
 NUM_PRODUCTS = 50
 NUM_CUSTOMERS = 200
-START_DATE = datetime.now() - timedelta(days=365*2) # 2 años de historia
-END_DATE = datetime.now()
+HISTORY_YEARS = 2
 
-def generate_products(n=NUM_PRODUCTS):
+def generate_products(n: int = NUM_PRODUCTS) -> pd.DataFrame:
+    """
+    Generates a synthetic dataset of products.
+
+    Args:
+        n (int): Number of products to generate.
+
+    Returns:
+        pd.DataFrame: DataFrame containing product details.
+    """
+    fake = Faker(LOCALE)
     products = []
     categories = ['Electrónica', 'Ropa', 'Hogar', 'Juguetes', 'Libros']
+    
     for _ in range(n):
         products.append({
             'product_id': fake.uuid4(),
-            'product_name': fake.word().capitalize() + " " + fake.word(),
+            'product_name': f"{fake.word().capitalize()} {fake.word()}",
             'category': random.choice(categories),
             'price': round(random.uniform(10, 500), 2),
             'cost': round(random.uniform(5, 300), 2)
         })
     return pd.DataFrame(products)
 
-def generate_customers(n=NUM_CUSTOMERS):
+def generate_customers(n: int = NUM_CUSTOMERS) -> pd.DataFrame:
+    """
+    Generates a synthetic dataset of customers.
+
+    Args:
+        n (int): Number of customers to generate.
+
+    Returns:
+        pd.DataFrame: DataFrame containing customer details.
+    """
+    fake = Faker(LOCALE)
     customers = []
+    
     for _ in range(n):
         customers.append({
             'customer_id': fake.uuid4(),
@@ -37,17 +63,29 @@ def generate_customers(n=NUM_CUSTOMERS):
         })
     return pd.DataFrame(customers)
 
-def generate_sales(products_df, customers_df, start_date, end_date):
+def generate_sales(products_df: pd.DataFrame, customers_df: pd.DataFrame, start_date: datetime, end_date: datetime) -> pd.DataFrame:
+    """
+    Generates synthetic sales history with seasonality and trends.
+
+    Args:
+        products_df (pd.DataFrame): DataFrame of available products.
+        customers_df (pd.DataFrame): DataFrame of registered customers.
+        start_date (datetime): Start date for the sales history.
+        end_date (datetime): End date for the sales history.
+
+    Returns:
+        pd.DataFrame: DataFrame containing sales transactions.
+    """
+    fake = Faker(LOCALE)
     sales = []
     current_date = start_date
     
-    # Simular estacionalidad y tendencia
     while current_date <= end_date:
-        # Más ventas en fin de semana
+        # Simulate weekend spikes
         is_weekend = current_date.weekday() >= 5
-        daily_orders = random.randint(10, 30) if not is_weekend else random.randint(20, 50)
+        daily_orders = random.randint(20, 50) if is_weekend else random.randint(10, 30)
         
-        # Estacionalidad simple (más ventas en diciembre)
+        # Simulate seasonal spike (December)
         if current_date.month == 12:
             daily_orders = int(daily_orders * 1.5)
             
@@ -70,23 +108,29 @@ def generate_sales(products_df, customers_df, start_date, end_date):
     return pd.DataFrame(sales)
 
 def main():
-    print("Generando datos maestros...")
+    """
+    Main execution function for data generation.
+    """
+    logger.info("Generating master data...")
     products_df = generate_products()
     customers_df = generate_customers()
     
-    print("Generando historial de ventas (esto puede tardar un poco)...")
-    sales_df = generate_sales(products_df, customers_df, START_DATE, END_DATE)
+    start_date = datetime.now() - timedelta(days=365 * HISTORY_YEARS)
+    end_date = datetime.now()
     
-    # Guardar datos
+    logger.info("Generating sales history...")
+    sales_df = generate_sales(products_df, customers_df, start_date, end_date)
+    
+    # Save data
     os.makedirs('data/raw', exist_ok=True)
     products_df.to_csv('data/raw/products.csv', index=False)
     customers_df.to_csv('data/raw/customers.csv', index=False)
     sales_df.to_csv('data/raw/sales.csv', index=False)
     
-    print(f"Datos generados exitosamente en data/raw/")
-    print(f" - Productos: {len(products_df)}")
-    print(f" - Clientes: {len(customers_df)}")
-    print(f" - Ventas: {len(sales_df)}")
+    logger.info("Data generation completed successfully.")
+    logger.info(f"Products: {len(products_df)}")
+    logger.info(f"Customers: {len(customers_df)}")
+    logger.info(f"Sales: {len(sales_df)}")
 
 if __name__ == "__main__":
     main()
